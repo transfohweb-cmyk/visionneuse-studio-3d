@@ -21,7 +21,6 @@
 <div id="three-viewer-container" style="width: 100vw; height: 100vh;"></div>
 
 <script async src="https://cdn.jsdelivr.net/npm/three@0.175.0/build/three.min.js"></script>
-
 <script async src="https://cdn.jsdelivr.net/npm/three@0.175.0/examples/js/loaders/GLTFLoader.js"></script>
 <script async src="https://cdn.jsdelivr.net/npm/three@0.175.0/examples/js/controls/OrbitControls.js"></script>
 <script async src="https://cdn.jsdelivr.net/npm/three@0.175.0/examples/js/loaders/RGBELoader.js"></script>
@@ -32,8 +31,8 @@
 <script async src="https://cdn.jsdelivr.net/npm/three@0.175.0/examples/js/postprocessing/SSAOPass.js"></script> 
 <script async src="https://cdn.jsdelivr.net/npm/three@0.175.0/examples/js/postprocessing/UnrealBloomPass.js"></script> 
 
+
 <script>
-document.addEventListener("DOMContentLoaded", function() {
 document.addEventListener("DOMContentLoaded", function() {
     
     // ⭐ PARAMÈTRES - CORRIGÉ POUR UTILISER VOTRE FICHIER UPLOADÉ (HIC.glb)
@@ -125,18 +124,17 @@ document.addEventListener("DOMContentLoaded", function() {
     composer.addPass(renderPass);
 
     // 2. SSAO (AMBIENT OCCLUSION) : ACTIVÉ PAR DÉFAUT
-    // Cela ajoute de la profondeur (ombres douces) dans les plis du vêtement.
     const ssaoPass = new THREE.SSAOPass(scene, camera, width, height);
     ssaoPass.kernelRadius = 0.5;
     ssaoPass.minDistance = 0.005;
     ssaoPass.maxDistance = 0.1;
-    ssaoPass.output = THREE.SSAOPass.OUTPUT.Default; // Rendu standard
+    ssaoPass.output = THREE.SSAOPass.OUTPUT.Default; 
     composer.addPass(ssaoPass);
     
     // 3. UNREAL BLOOM (LUMINOSITÉ/NETTETÉ) : ACTIVÉ PAR DÉFAUT
     const bloomPass = new THREE.UnrealBloomPass(new THREE.Vector2(width, height), 1.5, 0.4, 0.85);
     bloomPass.threshold = 0.8;
-    bloomPass.strength = 0.3; // Faible force pour un effet subtil
+    bloomPass.strength = 0.3; 
     composer.addPass(bloomPass);
 
 
@@ -168,8 +166,7 @@ document.addEventListener("DOMContentLoaded", function() {
     }
     window.addEventListener("resize", onWindowResize);
 
-});
+}); // <-- C'est l'accolade manquante qui causait l'erreur
 </script>
 </body>
 </html>
-
