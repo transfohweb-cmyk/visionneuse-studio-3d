@@ -64,7 +64,7 @@ document.addEventListener("DOMContentLoaded", function() {
     let mixer;
 
     // ÉCLAIRAGE HDR (VOTRE MAPPAGE HDRI PERSONNALISÉ)
-    new THREE.RGBELoader().load(HDR_URL, (texture) => {
+    new THREE.RGBELoader().load(HDR_URL, (texture) => {"brown_photostudio_02_4k.hdr";
         texture.mapping = THREE.EquirectangularReflectionMapping;
         scene.environment = texture; 
         scene.environmentIntensity = 1.0; 
@@ -76,7 +76,7 @@ document.addEventListener("DOMContentLoaded", function() {
     dracoLoader.setDecoderPath("https://cdn.jsdelivr.net/npm/three@0.175.0/examples/jsm/libs/draco/gltf/"); 
     loader.setDRACOLoader(dracoLoader);
     
-    loader.load(MODEL_URL, (gltf) => {
+    loader.load(MODEL_URL, (gltf) => {"HIC.glb";
         const model = gltf.scene;
         scene.add(model);
 
@@ -171,4 +171,5 @@ document.addEventListener("DOMContentLoaded", function() {
 </script>
 </body>
 </html>
+
 
