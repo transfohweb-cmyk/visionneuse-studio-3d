@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Visualiseur 3D Studio (Post-Processing)</title>
+    <title>Visualiseur 3D Studio (Final)</title>
     <style>
         /* CSS INTERNE À L'IFRAME : Garantit la pleine page et la transparence */
         body {
@@ -20,16 +20,16 @@
 
 <div id="three-viewer-container" style="width: 100vw; height: 100vh;"></div>
 
-<script async src="https://cdn.jsdelivr.net/npm/three@0.175.0/build/three.min.js"></script>
-<script async src="https://cdn.jsdelivr.net/npm/three@0.175.0/examples/js/loaders/GLTFLoader.js"></script>
-<script async src="https://cdn.jsdelivr.net/npm/three@0.175.0/examples/js/controls/OrbitControls.js"></script>
-<script async src="https://cdn.jsdelivr.net/npm/three@0.175.0/examples/js/loaders/RGBELoader.js"></script>
-<script async src="https://cdn.jsdelivr.net/npm/three@0.175.0/examples/js/loaders/DRACOLoader.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/three@0.175.0/build/three.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/three@0.175.0/examples/js/loaders/GLTFLoader.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/three@0.175.0/examples/js/controls/OrbitControls.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/three@0.175.0/examples/js/loaders/RGBELoader.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/three@0.175.0/examples/js/loaders/DRACOLoader.js"></script>
 
-<script async src="https://cdn.jsdelivr.net/npm/three@0.175.0/examples/js/postprocessing/EffectComposer.js"></script>
-<script async src="https://cdn.jsdelivr.net/npm/three@0.175.0/examples/js/postprocessing/RenderPass.js"></script>
-<script async src="https://cdn.jsdelivr.net/npm/three@0.175.0/examples/js/postprocessing/SSAOPass.js"></script> 
-<script async src="https://cdn.jsdelivr.net/npm/three@0.175.0/examples/js/postprocessing/UnrealBloomPass.js"></script> 
+<script src="https://cdn.jsdelivr.net/npm/three@0.175.0/examples/js/postprocessing/EffectComposer.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/three@0.175.0/examples/js/postprocessing/RenderPass.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/three@0.175.0/examples/js/postprocessing/SSAOPass.js"></script> 
+<script src="https://cdn.jsdelivr.net/npm/three@0.175.0/examples/js/postprocessing/UnrealBloomPass.js"></script> 
 
 
 <script>
@@ -44,6 +44,7 @@ document.addEventListener("DOMContentLoaded", function() {
     const height = window.innerHeight;
 
     // SCÈNE ET RENDERER
+    // LIGNE CRITIQUE : THREE est maintenant défini car les scripts sont chargés au-dessus
     const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
     renderer.setSize(width, height); 
     renderer.setClearAlpha(0); // Rendre le fond transparent
@@ -98,7 +99,6 @@ document.addEventListener("DOMContentLoaded", function() {
             if (child.isMesh) {
                 child.castShadow = true; 
                 child.receiveShadow = true;
-                // S'assurer que les matériaux supportent la réflexion HDR
                 if (child.material.isMeshStandardMaterial || child.material.isMeshPhysicalMaterial) {
                     child.material.needsUpdate = true;
                 }
@@ -166,7 +166,7 @@ document.addEventListener("DOMContentLoaded", function() {
     }
     window.addEventListener("resize", onWindowResize);
 
-}); // <-- C'est l'accolade manquante qui causait l'erreur
+});
 </script>
 </body>
 </html>
