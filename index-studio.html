@@ -28,14 +28,15 @@
 
 <script src="https://cdn.jsdelivr.net/npm/three@0.175.0/examples/js/postprocessing/EffectComposer.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/three@0.175.0/examples/js/postprocessing/RenderPass.js"></script>
-
 <script src="https://cdn.jsdelivr.net/npm/three@0.175.0/examples/js/postprocessing/SSAOPass.js"></script> 
 <script src="https://cdn.jsdelivr.net/npm/three@0.175.0/examples/js/postprocessing/UnrealBloomPass.js"></script> 
+
+
 <script>
 document.addEventListener("DOMContentLoaded", function() {
     
-    // ⭐ PARAMÈTRES - MODIFIEZ CEUX-CI UNE FOIS LES FICHIERS HÉBERGÉS
-    const MODEL_URL = "1736_autosave_18196_autosave-13.glb"; 
+    // ⭐ PARAMÈTRES - CORRIGÉ POUR UTILISER VOTRE FICHIER UPLOADÉ (HIC.glb)
+    const MODEL_URL = "HIC.glb"; 
     const HDR_URL = "brown_photostudio_02_4k.hdr"; 
     
     const container = document.getElementById('three-viewer-container');
@@ -45,11 +46,11 @@ document.addEventListener("DOMContentLoaded", function() {
     // SCÈNE ET RENDERER
     const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
     renderer.setSize(width, height); 
-    renderer.setClearAlpha(0); 
+    renderer.setClearAlpha(0); // Rendre le fond transparent
     
     // Rendu PBR/HDR
     renderer.toneMapping = THREE.ACESFilmicToneMapping;
-    renderer.toneMappingExposure = 0.8; // Réglé plus bas pour les modèles noirs
+    renderer.toneMappingExposure = 0.8; 
     renderer.outputColorSpace = THREE.SRGBColorSpace; 
     renderer.shadowMap.enabled = true; 
     renderer.shadowMap.type = THREE.PCFSoftShadowMap;
@@ -63,8 +64,8 @@ document.addEventListener("DOMContentLoaded", function() {
     const clock = new THREE.Clock();
     let mixer;
 
-    // ÉCLAIRAGE HDR (VOTRE MAPPAGE HDRI PERSONNALISÉ)
-    new THREE.RGBELoader().load(HDR_URL, (texture) => {"brown_photostudio_02_4k.hdr";
+    // ÉCLAIRAGE HDR
+    new THREE.RGBELoader().load(HDR_URL, (texture) => {
         texture.mapping = THREE.EquirectangularReflectionMapping;
         scene.environment = texture; 
         scene.environmentIntensity = 1.0; 
@@ -76,13 +77,13 @@ document.addEventListener("DOMContentLoaded", function() {
     dracoLoader.setDecoderPath("https://cdn.jsdelivr.net/npm/three@0.175.0/examples/jsm/libs/draco/gltf/"); 
     loader.setDRACOLoader(dracoLoader);
     
-    loader.load(MODEL_URL, (gltf) => {"HIC.glb";
+    loader.load(MODEL_URL, (gltf) => {
         const model = gltf.scene;
         scene.add(model);
 
         // Centrage et Matériaux
         const box = new THREE.Box3().setFromObject(model);
-        box.getCenter(new THREE.Vector3()).negate(); // Décalage vers le centre
+        box.getCenter(new THREE.Vector3()).negate(); 
         model.position.copy(box.getCenter(new THREE.Vector3()).negate());
 
         const size = box.getSize(new THREE.Vector3());
@@ -97,6 +98,10 @@ document.addEventListener("DOMContentLoaded", function() {
             if (child.isMesh) {
                 child.castShadow = true; 
                 child.receiveShadow = true;
+                // S'assurer que les matériaux supportent la réflexion HDR
+                if (child.material.isMeshStandardMaterial || child.material.isMeshPhysicalMaterial) {
+                    child.material.needsUpdate = true;
+                }
             }
         });
 
@@ -110,7 +115,7 @@ document.addEventListener("DOMContentLoaded", function() {
     });
 
 
-    // ⭐⭐⭐ POST-PROCESSING : L'INFRASTRUCTURE ⭐⭐⭐
+    // ⭐⭐⭐ POST-PROCESSING : INFRASTRUCTURE ET EFFETS ACTIVÉS ⭐⭐⭐
     const composer = new THREE.EffectComposer(renderer);
     composer.setPixelRatio(window.devicePixelRatio);
     
@@ -118,28 +123,23 @@ document.addEventListener("DOMContentLoaded", function() {
     const renderPass = new THREE.RenderPass(scene, camera);
     composer.addPass(renderPass);
 
-    /* // 2. AJOUT DES EFFETS SPÉCIFIQUES (DÉCOMMENTER ET CONFIGURER POUR ACTIVER)
-    
-    // SSAO (Ambiance Occlusion) : Ajoute de la profondeur aux plis du tissu
+    // 2. SSAO (AMBIENT OCCLUSION) : ACTIVÉ PAR DÉFAUT
+    // Cela ajoute de la profondeur (ombres douces) dans les plis du vêtement.
     const ssaoPass = new THREE.SSAOPass(scene, camera, width, height);
     ssaoPass.kernelRadius = 0.5;
     ssaoPass.minDistance = 0.005;
     ssaoPass.maxDistance = 0.1;
+    ssaoPass.output = THREE.SSAOPass.OUTPUT.Default; // Rendu standard
     composer.addPass(ssaoPass);
     
-    // Unreal Bloom (Peut simuler netteté ou grain léger si bien réglé)
+    // 3. UNREAL BLOOM (LUMINOSITÉ/NETTETÉ) : ACTIVÉ PAR DÉFAUT
     const bloomPass = new THREE.UnrealBloomPass(new THREE.Vector2(width, height), 1.5, 0.4, 0.85);
     bloomPass.threshold = 0.8;
-    bloomPass.strength = 0.5; // Plus bas pour la netteté, plus haut pour la brillance
+    bloomPass.strength = 0.3; // Faible force pour un effet subtil
     composer.addPass(bloomPass);
 
-    // Pour l'aberration chromatique, le grain, le DOF ou le SSR, vous devrez 
-    // intégrer les modules correspondants et les ajouter ici.
-    */
-    // ⭐⭐⭐ FIN POST-PROCESSING ⭐⭐⭐
 
-
-    // BOUCLE D'ANIMATION (UTILISE LE COMPOSER, PAS LE RENDERER)
+    // BOUCLE D'ANIMATION (UTILISE LE COMPOSER)
     function animate() {
         requestAnimationFrame(animate);
 
@@ -147,7 +147,7 @@ document.addEventListener("DOMContentLoaded", function() {
         if (mixer) mixer.update(delta);
         
         controls.update();
-        // ⭐ UTILISE LE COMPOSER POUR APPLIQUER LES EFFETS ⭐
+        // Utilise le COMPOSER pour rendre la scène avec les effets
         composer.render(); 
     }
     animate();
@@ -161,7 +161,7 @@ document.addEventListener("DOMContentLoaded", function() {
             camera.aspect = width / height;
             camera.updateProjectionMatrix();
             renderer.setSize(width, height);
-            composer.setSize(width, height); // Met à jour le composer aussi
+            composer.setSize(width, height); 
             controls.update();
         }
     }
@@ -171,5 +171,3 @@ document.addEventListener("DOMContentLoaded", function() {
 </script>
 </body>
 </html>
-
-
